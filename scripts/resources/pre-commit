@@ -1,0 +1,39 @@
+#!/bin/sh
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+# Colors
+if [ -t 0 ]; then
+	reset=$(tput sgr0)
+	dark_red=$(tput setaf 1)
+	light_red=$(tput setaf 9)
+	light_gray=$(tput setaf 7)
+else
+	reset=""
+	dark_red=""
+	light_red=""
+	light_gray=""
+fi
+
+which swiftlint > /dev/null
+if [ $? != 0 ]; then
+	echo "${light_red}Swiftlint is missing"
+	echo "${dark_red}Please install SwiftLint \`brew install swiftlint\`${reset}"
+	exit 1
+fi
+
+echo "${light_gray}Running swiftlint autocorrect (quietly). You can see the full output by running \`swiftlint --fix\`${reset}"
+fixes=$(swiftlint --fix 2>&1 | grep -co 'Corrected')
+if [ $fixes -gt 0 ]; then
+	echo "\n${light_red}Swiftlint auto-corrections applied"
+	echo "${dark_red}Please double check your diff${reset}"
+fi
+
+errors=$(swiftlint lint 2>&1 | grep ': error:' )
+if [ "$errors" != ""  ]; then
+	echo "\n${light_red}Swiftlint errors found!"
+	echo "${dark_red}${errors}${reset}"
+fi
+
+if [ $fixes -gt 0 ] || [ "$errors" != "" ]; then
+	exit 1
+fi

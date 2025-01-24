@@ -13,7 +13,6 @@ struct WelcomeView: View {
     var body: some View {
         VStack {
             Spacer()
-            
             Text("Welcome to Jobsy")
                 .font(.title).bold()
                 .padding(.bottom, 20)
@@ -27,14 +26,12 @@ struct WelcomeView: View {
                     Text("Recruiter")
                 })
                 .buttonStyle(.onboardingStyle())
-                
                 Button(action: { viewModel.selectRole(.candidate) }, label: {
                     Text("Candidate")
                 })
                 .buttonStyle(.onboardingStyle())
             }
             .padding(.horizontal, 60)
-            
             Spacer()
         }
         .padding()
