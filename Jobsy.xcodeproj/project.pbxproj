@@ -394,7 +394,7 @@
 				CODE_SIGN_ENTITLEMENTS = Jobsy/Jobsy.entitlements;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Jobsy/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Jobsy/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -437,7 +437,7 @@
 				CODE_SIGN_ENTITLEMENTS = Jobsy/Jobsy.entitlements;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Jobsy/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Jobsy/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
