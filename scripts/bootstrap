@@ -1,0 +1,111 @@
+#!/bin/bash
+
+# Colors
+dark_red=$(tput setaf 1)
+light_red=$(tput setaf 9)
+dark_green=$(tput setaf 2)
+light_green=$(tput setaf 10)
+reset=$(tput sgr0)
+light_gray=$(tput setaf 7)
+dark_gray=$(tput setaf 8)
+
+echo "${light_gray}Checking to make sure your environment is correctly configured:"
+echo "${light_gray}- Homebrew"
+echo "${light_gray}- SwiftLint"
+echo "${light_gray}- Git Config"
+
+########## Status Trackers ##########
+success=true
+
+########## Homebrew ##########
+echo "${dark_gray}Checking Homebrew:${reset}"
+if command -v brew &> /dev/null; then
+    echo "${light_green}✓ Homebrew is installed"
+else
+    echo "${dark_red}✗ Homebrew is not installed. Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" || {
+        echo "${dark_red}✗ Failed to install Homebrew"
+        success=false
+    }
+fi
+
+########## SwiftLint ##########
+echo "${dark_gray}Checking SwiftLint:${reset}"
+if command -v swiftlint &> /dev/null; then
+    echo "${light_green}✓ SwiftLint is installed"
+else
+    echo "${dark_red}✗ SwiftLint is not installed. Installing SwiftLint via Homebrew..."
+    if ! brew install swiftlint; then
+        echo "${dark_red}✗ Failed to install SwiftLint"
+        success=false
+    fi
+fi
+
+########## Git Config ##########
+echo "${dark_gray}Checking Git Config:${reset}"
+ignorecase=$(git config --global core.ignorecase 2>/dev/null)
+
+if [ "$ignorecase" = "false" ]; then
+    echo "${light_green}✓ Git core.ignorecase is correctly set to false"
+else
+    echo "${light_red}✗ Git core.ignorecase is not set to false. Updating..."
+    git config --global core.ignorecase false
+    if [ "$(git config --global core.ignorecase)" = "false" ]; then
+        echo "${light_green}✓ Git core.ignorecase set to false"
+    else
+        echo "${dark_red}✗ Failed to set Git core.ignorecase"
+        success=false
+    fi
+fi
+
+########## Pre-Commit Hook ##########
+echo "${dark_gray}Setting up Git hooks:${reset}"
+if [ ! -d ".git" ]; then
+    echo "${light_red}✗ \`.git\` directory missing"
+    echo "${dark_red}Ensure you are running this script in the root of a Git repository."
+    success=false
+else
+    if [ ! -d ".git/hooks" ]; then
+        echo "${dark_gray}Creating ${light_gray}.git/hooks${dark_gray} directory"
+        mkdir -p .git/hooks || {
+            echo "${light_red}✗ Failed to create ${light_gray}.git/hooks${light_red} directory"
+            success=false
+        }
+    fi
+    echo "${light_green}✓ Git Hooks Directory exists"
+
+    if [ ! -d "scripts/resources/" ]; then
+        echo "${light_red}✗ \`scripts/resources/\` directory missing"
+        echo "${dark_red}Cannot find pre-commit script directory. Ensure $(git rev-parse --show-toplevel)/scripts/resources/ exists."
+        success=false
+    else
+        if [ -f ".git/hooks/pre-commit" ]; then
+            bak_name="pre-commit.bak$(date +%s)"
+            echo "${dark_gray}Backing up existing pre-commit hook to ${light_gray}$bak_name"
+            mv .git/hooks/pre-commit ".git/hooks/$bak_name"
+        fi
+
+        cp scripts/resources/pre-commit .git/hooks/pre-commit && \
+        chmod +x .git/hooks/pre-commit
+        echo "${light_green}✓ Pre-Commit hook copied and made executable"
+    fi
+fi
+
+########## Xcode Prefs ##########
+echo "${dark_gray}Installing Xcode Preferences:${reset}"
+if ./scripts/xcode_prefs; then
+    echo "${light_green}✓ Xcode Preferences installed"
+else
+    echo "${light_red}✗ Failed to install Xcode Preferences"
+    success=false
+fi
+
+########## Final Check ##########
+if $success; then
+    echo "${light_green}🎉 Everything is installed and configured successfully! You're good to go. ${reset}"
+else
+    echo "${light_red}⚠️ Some checks or installations failed. Please review the errors above.${reset}"
+fi
+
+echo ""
+
