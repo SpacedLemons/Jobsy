@@ -9,7 +9,7 @@ Welcome to Jobsy, powered by AI and designed to empower candidates in their job 
 To get started, clone the repository to your local machine:
 
 ```
-git clone https://github.com/your-org/jobsy.git
+git clone https://github.com/jobsy.git
 cd jobsy
 ```
 
