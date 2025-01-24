@@ -1,0 +1,17 @@
+#!/bin/bash
+
+defaults write com.apple.dt.XCode DVTTextEditorTrimTrailingWhitespace 1
+defaults write com.apple.dt.XCode DVTTextEditorTrimWhitespaceOnlyLines 1
+defaults write com.apple.dt.XCode DVTTextIndentUsingTabs 0
+defaults write com.apple.dt.XCode DVTTextIndentOnPaste 1
+defaults write com.apple.dt.XCode DVTTextIndentWidth 4
+defaults write com.apple.dt.XCode DVTTextIndentTabWidth 4
+defaults write com.apple.dt.XCode DVTTextPageGuideLocation 100
+defaults write com.apple.dt.XCode DVTTextShowCodeCoverage 1
+defaults write com.apple.dt.XCode IDESourceControlAutomaticallyAddNewFiles 0
+
+if command -v brew &> /dev/null; then
+  defaults write com.apple.dt.Xcode IDEHomebrewPrefixPath -string "$(brew --prefix)"
+fi
+
+exit 0

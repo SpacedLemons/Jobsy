@@ -1,0 +1,121 @@
+disabled_rules:
+  - file_length
+  - function_body_length
+  - large_tuple
+  - line_length
+  - nesting
+  - type_body_length
+  - trailing_comma
+  - inclusive_language
+  - implicit_getter
+
+opt_in_rules:
+ - empty_count
+ - first_where
+ - overridden_super_call
+ - syntactic_sugar
+ - force_unwrapping
+ - weak_delegate
+
+excluded:
+  - JobsyTests                   # Ignore Swift files under "JobsyTests/"
+  - JobsyUITests                 # Ignore Swift files under "JobsyUITests/"
+
+custom_rules:
+  already_true:
+    name: "Already True"
+    regex: "== true"
+    message: "Don't compare to true, just use the bool value or .isTrue when Optional."
+  already_bool:
+    name: "Already Bool"
+    regex: "== false"
+    message: "Don't compare to false, just use !value or .isFalse when Optional."
+  singleton_use:
+    name: "Direct Singleton access"
+    regex: '(\.shared\.|\.current\.|\.default\.|\.main\.|\.standard\.|\.instance\.)'
+    message: Don't access singletons directly. Assign them to a property using a protocol type and conform the singleton to the protocol.
+
+closure_parameter_position:
+  severity: error
+
+colon:
+  apply_to_dictionaries: false
+  severity: error
+
+identifier_name:
+  min_length:
+    error: 2
+  max_length: # warning and error
+    warning: 60
+    error: 70
+  allowed_symbols:
+    - _
+
+  excluded: # names to ignore
+    - id
+    - ID
+    - to
+    - URL
+    - me
+    - tz
+    - up
+    - ok
+    - on
+    - h1
+    - h2
+    - h3
+    - h4
+    - x
+    - y
+    - nc
+
+type_name:
+  min_length: 3 # only warning
+  max_length: # warning and error
+    warning: 50
+    error: 60
+
+control_statement:
+  severity: error
+
+empty_enum_arguments:
+  severity: error
+
+first_where:
+  severity: error
+
+for_where:
+  severity: error
+
+legacy_constructor:
+  severity: error
+
+operator_whitespace:
+  severity: error
+
+overridden_super_call:
+   severity: error
+
+redundant_string_enum_value:
+  severity: error
+
+statement_position:
+  severity: error
+
+syntactic_sugar:
+  severity: error
+
+unused_optional_binding:
+  severity: error
+
+vertical_parameter_alignment:
+  severity: error
+
+force_unwrapping:
+    severity: error
+
+weak_delegate:
+  severity: error
+
+cyclomatic_complexity:
+  ignores_case_statements: true
