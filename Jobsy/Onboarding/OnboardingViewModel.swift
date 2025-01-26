@@ -14,6 +14,7 @@ enum UserRole: String {
 
 final class OnboardingViewModel: ObservableObject {
     @Published var isFullScreenPresented = false
+    @Published var isNotificationsEnabled = true // Temporarily defaults to true for now
     @Published var selectedUserRole: UserRole?
 
     func selectRole(_ role: UserRole) {
