@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct UploadCVView: View {
-
     @ObservedObject var viewModel = OnboardingViewModel()
 
     var body: some View {
