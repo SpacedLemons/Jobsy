@@ -2,6 +2,8 @@
 
 Welcome to Jobsy, powered by AI and designed to empower candidates in their job search.
 
+Please find a link to the planned v1 of the app [here](https://docs.google.com/document/d/1-rNdZz7zHScNhZ9viG1k6qI3WBDACeG8iRomj3YMpZo/edit?usp=sharing)
+
 # Setup
 
 ## Clone the Repository
