@@ -47,7 +47,11 @@ struct WelcomeView: View {
             onDismiss: { viewModel.dismiss() },
             content: {
                 if viewModel.selectedUserRole == .candidate {
-                    UploadCVView(viewModel: viewModel)
+                    if viewModel.areNotificationsEnabled {
+                        EnableNotificationsView()
+                    } else {
+                        UploadCVView(viewModel: viewModel)
+                    }
                 } else if let userRole = viewModel.selectedUserRole {
                     TempRecruiterView(viewModel: viewModel, userRole: userRole)
                 }
