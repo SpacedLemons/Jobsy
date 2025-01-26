@@ -47,7 +47,7 @@ struct WelcomeView: View {
             onDismiss: { viewModel.dismiss() },
             content: {
                 if viewModel.selectedUserRole == .candidate {
-                    if viewModel.areNotificationsEnabled {
+                    if viewModel.isNotificationsEnabled {
                         EnableNotificationsView()
                     } else {
                         UploadCVView(viewModel: viewModel)

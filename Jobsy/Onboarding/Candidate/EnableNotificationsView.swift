@@ -42,7 +42,7 @@ You will receive notifications every 2 weeks asking to confirm your position in 
 
             Spacer()
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal)
     }
 }
 
