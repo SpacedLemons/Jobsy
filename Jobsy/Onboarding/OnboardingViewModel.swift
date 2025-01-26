@@ -1,5 +1,5 @@
 //
-//  UserOnboardingViewModel.swift
+//  OnboardingViewModel.swift
 //  Jobsy
 //
 //  Created by Lucas West on 24/01/2025.

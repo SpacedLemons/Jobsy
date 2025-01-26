@@ -46,8 +46,10 @@ struct WelcomeView: View {
             isPresented: $viewModel.isFullScreenPresented,
             onDismiss: { viewModel.dismiss() },
             content: {
-                if let userRole = viewModel.selectedUserRole {
-                    UserOnboardingView(userRole: userRole)
+                if viewModel.selectedUserRole == .candidate {
+                    UploadCVView(viewModel: viewModel)
+                } else if let userRole = viewModel.selectedUserRole {
+                    TempRecruiterView(viewModel: viewModel, userRole: userRole)
                 }
             }
         )
