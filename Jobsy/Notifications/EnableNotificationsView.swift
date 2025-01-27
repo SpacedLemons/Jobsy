@@ -8,14 +8,10 @@
 import SwiftUI
 
 struct EnableNotificationsView: View {
-    @StateObject var viewModel: OnboardingViewModel
+    @ObservedObject var viewModel: OnboardingViewModel
     @State private var presentNotifications = false
 
-    private var notificationButtonText: String {
-        viewModel.notificationStatus == .denied ?
-        "Open Settings to Enable Notifications" :
-        "Enable Notifications"
-    }
+    private var notificationButtonText: String { viewModel.notificationStatus == .denied ? "Open Settings to Enable Notifications" : "Enable Notifications" }
 
     private let notificationDetailsText = """
 We do this to ensure you're still looking for roles.

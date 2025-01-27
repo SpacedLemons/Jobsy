@@ -24,11 +24,12 @@ final class OnboardingViewModel: ObservableObject {
     @Published var isFullScreenPresented = false
     @Published var selectedUserRole: UserRole?
     @Published var currentView: OnboardingView = .welcome
-    @Published private(set) var notificationStatus: NotificationsManager.NotificationStatus = .notDetermined
+    @Published private(set) var notificationStatus: NotificationStatus = .notDetermined
 
-    private let notificationsManager = NotificationsManager.shared
+    private let notificationsManager: NotificationsManagerProtocol
 
-    init() {
+    init(notificationsManager: NotificationsManagerProtocol = NotificationsManager.shared) {
+        self.notificationsManager = notificationsManager
         Task { await checkNotificationStatus() }
     }
 
@@ -39,10 +40,9 @@ final class OnboardingViewModel: ObservableObject {
     }
 
     @discardableResult
-    func checkNotificationStatus() async -> NotificationsManager.NotificationStatus {
+    func checkNotificationStatus() async -> NotificationStatus {
         notificationStatus = await notificationsManager.getNotificationStatus()
 
-        // If notifications are now authorized and we're on the notifications view, advance
         if notificationStatus == .authorized && currentView == .notifications {
             navigateToUploadCV()
         }
