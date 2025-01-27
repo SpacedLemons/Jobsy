@@ -54,7 +54,7 @@ struct WelcomeView: View {
                         if let userRole = viewModel.selectedUserRole {
                             TempRecruiterView(viewModel: viewModel, userRole: userRole)
                         }
-                    case .welcome: EmptyView()
+                    case .welcome: WelcomeView()
                     }
                 }
             }

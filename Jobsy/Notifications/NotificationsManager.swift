@@ -8,13 +8,27 @@
 import SwiftUI
 import UserNotifications
 
-class NotificationsManager {
+final class NotificationsManager {
     static let shared = NotificationsManager()
-
     private let notificationCenter: UNUserNotificationCenter
 
     private init(notificationCenter: UNUserNotificationCenter = .current()) {
         self.notificationCenter = notificationCenter
+    }
+
+    enum NotificationStatus {
+        case authorized
+        case denied
+        case notDetermined
+    }
+
+    func getNotificationStatus() async -> NotificationStatus {
+        let settings = await notificationCenter.notificationSettings()
+        switch settings.authorizationStatus {
+        case .authorized: return .authorized
+        case .denied: return .denied
+        default: return .notDetermined
+        }
     }
 
     func requestAuthorization() async throws -> Bool {
@@ -57,11 +71,6 @@ class NotificationsManager {
         try await notificationCenter.add(notification)
     }
 
-    func removeAllPendingNotifications() {
-        notificationCenter.removeAllPendingNotificationRequests()
-    }
-
-    func removeAllDeliveredNotifications() {
-        notificationCenter.removeAllDeliveredNotifications()
-    }
+    func removeAllPendingNotifications() { notificationCenter.removeAllPendingNotificationRequests() }
+    func removeAllDeliveredNotifications() { notificationCenter.removeAllDeliveredNotifications() }
 }

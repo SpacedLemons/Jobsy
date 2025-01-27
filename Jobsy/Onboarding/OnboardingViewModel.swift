@@ -22,18 +22,56 @@ enum OnboardingView {
 @MainActor
 final class OnboardingViewModel: ObservableObject {
     @Published var isFullScreenPresented = false
-    @Published var isNotificationsEnabled = false
     @Published var selectedUserRole: UserRole?
     @Published var currentView: OnboardingView = .welcome
+    @Published private(set) var notificationStatus: NotificationsManager.NotificationStatus = .notDetermined
 
     private let notificationsManager = NotificationsManager.shared
 
-    init() { Task { await checkNotificationStatus() } }
+    init() {
+        Task { await checkNotificationStatus() }
+    }
 
     func selectRole(_ role: UserRole) {
         selectedUserRole = role
         isFullScreenPresented = true
-        currentView = role == .candidate ? (isNotificationsEnabled ? .uploadCV : .notifications) : .recruiter
+        currentView = role == .candidate ? (notificationStatus == .authorized ? .uploadCV : .notifications) : .recruiter
+    }
+
+    @discardableResult
+    func checkNotificationStatus() async -> NotificationsManager.NotificationStatus {
+        notificationStatus = await notificationsManager.getNotificationStatus()
+
+        // If notifications are now authorized and we're on the notifications view, advance
+        if notificationStatus == .authorized && currentView == .notifications {
+            navigateToUploadCV()
+        }
+
+        return notificationStatus
+    }
+
+    func enableNotifications() async -> Bool {
+        do {
+            if notificationStatus == .denied {
+                if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+                    await UIApplication.shared.open(settingsUrl)
+                }
+                return false
+            }
+
+            let granted = try await notificationsManager.requestAuthorization()
+            notificationStatus = granted ? .authorized : .denied
+
+            if granted {
+                try await notificationsManager.scheduleNotification(.fortnightlyCheckNotification)
+                navigateToUploadCV()
+            }
+
+            return granted
+        } catch {
+            print("Failed to enable notifications: \(error)")
+            return false
+        }
     }
 
     func navigateToUploadCV() { currentView = .uploadCV }
@@ -42,24 +80,5 @@ final class OnboardingViewModel: ObservableObject {
         selectedUserRole = nil
         isFullScreenPresented = false
         currentView = .welcome
-    }
-
-    func checkNotificationStatus() async {
-        isNotificationsEnabled = await notificationsManager.checkNotificationStatus()
-    }
-
-    func enableNotifications() async -> Bool {
-        do {
-            let granted = try await notificationsManager.requestAuthorization()
-            isNotificationsEnabled = granted
-            if granted {
-                try await notificationsManager.scheduleNotification(.fortnightlyCheckNotification)
-                navigateToUploadCV()
-            }
-            return granted
-        } catch {
-            print("Failed to enable notifications: \(error)")
-            return false
-        }
     }
 }

@@ -11,8 +11,14 @@ struct EnableNotificationsView: View {
     @StateObject var viewModel: OnboardingViewModel
     @State private var presentNotifications = false
 
+    private var notificationButtonText: String {
+        viewModel.notificationStatus == .denied ?
+        "Open Settings to Enable Notifications" :
+        "Enable Notifications"
+    }
+
     private let notificationDetailsText = """
-This is so we can keep recruiters updated.
+We do this to ensure you're still looking for roles.
 
 You will receive notifications every 2 weeks asking to confirm your position in the job market.
 """
@@ -25,7 +31,7 @@ You will receive notifications every 2 weeks asking to confirm your position in 
                 .font(.title).bold()
 
             VStack(spacing: 20) {
-                Text("We require you to enable notifications")
+                Text("To keep you up to date, we suggest enabling notifications")
                     .font(.headline)
                     .multilineTextAlignment(.center)
 
@@ -35,7 +41,7 @@ You will receive notifications every 2 weeks asking to confirm your position in 
                     .multilineTextAlignment(.center)
 
                 Button(action: { presentNotifications = true }, label: {
-                    Text("Enable notifications")
+                    Text(notificationButtonText)
                 })
                 .buttonStyle(.onboardingStyle())
             }
@@ -48,6 +54,11 @@ You will receive notifications every 2 weeks asking to confirm your position in 
             guard presentNotifications else { return }
             _ = await viewModel.enableNotifications()
             presentNotifications = false
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            Task {
+                await viewModel.checkNotificationStatus()
+            }
         }
     }
 }
