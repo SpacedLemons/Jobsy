@@ -25,13 +25,13 @@ class EnableNotificationsViewTests: XCTestCase {
 
     func testOpenSettingsWhenDenied() async {
         // Given
-        let view = EnableNotificationsView(viewModel: viewModel, application: mockApplication)
+        let view = EnableNotificationsView(viewModel: viewModel)
 
         mockNotifications.notificationStatus = .denied
         await viewModel.checkNotificationStatus()
 
         // When
-        view.presentNotifications = true
+        view.viewModel.isNotificationsPresented = true
         _ = await mockApplication.open(URL(string: UIApplication.openSettingsURLString)!)
 
         // Then
@@ -41,15 +41,13 @@ class EnableNotificationsViewTests: XCTestCase {
 
     func testEnableNotificationsWhenNotDetermined() async {
         // Given
-        let view = EnableNotificationsView(viewModel: viewModel, application: mockApplication)
+        let view = EnableNotificationsView(viewModel: viewModel)
 
-        // Ensure initial state
         mockNotifications.notificationStatus = .notDetermined
         await viewModel.checkNotificationStatus()
 
         // When
-        view.presentNotifications = true
-        // Directly trigger notification enable flow
+        view.viewModel.isNotificationsPresented = true
         await viewModel.enableNotifications()
 
         // Then
@@ -58,7 +56,7 @@ class EnableNotificationsViewTests: XCTestCase {
 
     func testNavigateToUploadCVWhenReturningFromSettings() async {
         // Given
-        let _ = EnableNotificationsView(viewModel: viewModel, application: mockApplication)
+        let _ = EnableNotificationsView(viewModel: viewModel)
 
         mockNotifications.notificationStatus = .denied
         await viewModel.checkNotificationStatus()

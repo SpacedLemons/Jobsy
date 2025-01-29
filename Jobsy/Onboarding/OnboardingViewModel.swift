@@ -21,6 +21,7 @@ enum OnboardingView {
 
 @MainActor
 final class OnboardingViewModel: ObservableObject {
+    @Published var isNotificationsPresented = false
     @Published var isFullScreenPresented = false
     @Published var selectedUserRole: UserRole?
     @Published var currentView: OnboardingView = .welcome

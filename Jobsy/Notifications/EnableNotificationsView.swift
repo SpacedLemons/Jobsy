@@ -9,7 +9,6 @@ import SwiftUI
 
 struct EnableNotificationsView: View {
     @ObservedObject var viewModel: OnboardingViewModel
-    @State private var presentNotifications = false
 
     init(viewModel: OnboardingViewModel) { self.viewModel = viewModel }
 
@@ -41,7 +40,7 @@ struct EnableNotificationsView: View {
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
 
-                Button(action: { presentNotifications = true }, label: {
+                Button(action: { viewModel.isNotificationsPresented = true }, label: {
                     Text(notificationButtonText)
                 })
                 .buttonStyle(.onboardingStyle())
@@ -51,14 +50,14 @@ struct EnableNotificationsView: View {
             Spacer()
         }
         .padding(.horizontal)
-        .task(id: presentNotifications) {
-            guard presentNotifications else { return }
+        .task(id: viewModel.isNotificationsPresented) {
+            guard viewModel.isNotificationsPresented else { return }
             if viewModel.notificationStatus == .denied {
                 openSettings()
             } else {
                 await viewModel.enableNotifications()
             }
-            presentNotifications = false
+            viewModel.isNotificationsPresented = false
         }
         .onReceive(application.didBecomeActivePublisher) { _ in
             Task {

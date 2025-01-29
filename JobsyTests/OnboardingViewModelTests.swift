@@ -9,7 +9,7 @@
 @testable import Jobsy
 import XCTest
 
-@MainActor // Add this to the class declaration
+@MainActor
 class OnboardingViewModelTests: XCTestCase {
     var mockNotifications: MockNotificationsManager!
     var viewModel: OnboardingViewModel!
@@ -27,7 +27,7 @@ class OnboardingViewModelTests: XCTestCase {
 
         // When
         viewModel.selectRole(.candidate)
-        try? await Task.sleep(nanoseconds: 100_000) // Small delay instead of fulfillment
+        try? await Task.sleep(nanoseconds: 100_000)
 
         // Then
         XCTAssertEqual(viewModel.currentView, .uploadCV)
@@ -44,7 +44,6 @@ class OnboardingViewModelTests: XCTestCase {
         // Then
         XCTAssertTrue(mockNotifications.authorizationRequested)
         await MainActor.run {
-            // Verify both the navigation and status update
             XCTAssertEqual(viewModel.currentView, .uploadCV)
             XCTAssertEqual(viewModel.notificationStatus, .authorized)
         }
