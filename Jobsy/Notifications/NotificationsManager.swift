@@ -23,7 +23,7 @@ final class NotificationsManager {
     static let shared = NotificationsManager()
     private let notificationCenter: UNUserNotificationCenter
 
-    private init(notificationCenter: UNUserNotificationCenter = .current()) {
+    init(notificationCenter: UNUserNotificationCenter = .current()) {
         self.notificationCenter = notificationCenter
     }
 
