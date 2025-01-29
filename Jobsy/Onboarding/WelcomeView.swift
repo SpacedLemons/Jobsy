@@ -46,14 +46,16 @@ struct WelcomeView: View {
             isPresented: $viewModel.isFullScreenPresented,
             onDismiss: { viewModel.dismiss() },
             content: {
-                if viewModel.selectedUserRole == .candidate {
-                    if viewModel.isNotificationsEnabled {
-                        EnableNotificationsView()
-                    } else {
-                        UploadCVView(viewModel: viewModel)
+                Group {
+                    switch viewModel.currentView {
+                    case .notifications: EnableNotificationsView(viewModel: viewModel)
+                    case .uploadCV: UploadCVView(viewModel: viewModel)
+                    case .recruiter:
+                        if let userRole = viewModel.selectedUserRole {
+                            TempRecruiterView(viewModel: viewModel, userRole: userRole)
+                        }
+                    case .welcome: WelcomeView()
                     }
-                } else if let userRole = viewModel.selectedUserRole {
-                    TempRecruiterView(viewModel: viewModel, userRole: userRole)
                 }
             }
         )

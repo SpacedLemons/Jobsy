@@ -11,7 +11,12 @@ struct UploadCVView: View {
     @ObservedObject var viewModel = OnboardingViewModel()
 
     var body: some View {
-        Text("Hello, World!")
+        Button(action: { viewModel.dismiss() }, label: {
+            HStack {
+                Image(systemName: "arrow.backward")
+                Text("Debug dismiss")
+            }
+        })
     }
 }
 
