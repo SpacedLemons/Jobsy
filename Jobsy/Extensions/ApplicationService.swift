@@ -13,14 +13,45 @@ protocol ApplicationService {
     func open(_ url: URL) async -> Bool
 }
 
+protocol NotificationPublishing {
+    func publisher(for name: Notification.Name, object: AnyObject?) -> NotificationCenter.Publisher
+}
+
+protocol ApplicationProtocol { func open(_ url: URL) async -> Bool }
+
 class UIApplicationService: ApplicationService {
-    static let shared = UIApplicationService()
+
+    private let notificationCenter: NotificationPublishing
+    private let application: ApplicationProtocol
+
+    init(
+        notificationCenter: NotificationPublishing = NotificationCenter.default,
+        application: ApplicationProtocol = UIApplication.shared
+    ) {
+        self.notificationCenter = notificationCenter
+        self.application = application
+    }
 
     var didBecomeActivePublisher: NotificationCenter.Publisher {
-        NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
+        notificationCenter.publisher(
+            for: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
 
     func open(_ url: URL) async -> Bool {
-        await UIApplication.shared.open(url)
+        await application.open(url)
     }
 }
+
+extension UIApplication: ApplicationProtocol {
+    func open(_ url: URL) async -> Bool {
+        return await withCheckedContinuation { continuation in
+            self.open(url, options: [:]) { success in
+                continuation.resume(returning: success)
+            }
+        }
+    }
+}
+
+extension NotificationCenter: NotificationPublishing {}

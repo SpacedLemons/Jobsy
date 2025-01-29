@@ -7,77 +7,71 @@
 
 import SwiftUI
 
-    struct EnableNotificationsView: View {
-        @ObservedObject var viewModel: OnboardingViewModel
-        @State var presentNotifications = false
+struct EnableNotificationsView: View {
+    @ObservedObject var viewModel: OnboardingViewModel
+    @State private var presentNotifications = false
 
-        init(
-            viewModel: OnboardingViewModel,
-            application: ApplicationService = UIApplicationService.shared
-        ) {
-            self.viewModel = viewModel
-            self.application = application
-        }
+    init(viewModel: OnboardingViewModel) { self.viewModel = viewModel }
 
-        private var notificationButtonText: String {
-            viewModel.notificationStatus == .denied ? "Open Settings to Enable Notifications" : "Enable Notifications"
-        }
+    private var notificationButtonText: String {
+        viewModel.notificationStatus == .denied ? "Open Settings to Enable Notifications" : "Enable Notifications"
+    }
 
-        private let application: ApplicationService
-        private let notificationDetailsText = """
+    private let application: ApplicationService = UIApplicationService()
+    private let notificationDetailsText = """
         We do this to ensure you're still looking for roles.
 
         You will receive notifications every 2 weeks asking to confirm your position in the job market.
         """
 
-        var body: some View {
+    var body: some View {
+        VStack(spacing: 20) {
+            Spacer()
+
+            Text("Before we start...")
+                .font(.title).bold()
+
             VStack(spacing: 20) {
-                Spacer()
+                Text("To keep you up to date, we suggest enabling notifications")
+                    .font(.headline)
+                    .multilineTextAlignment(.center)
 
-                Text("Before we start...")
-                    .font(.title).bold()
+                Text(notificationDetailsText)
+                    .font(.footnote).bold()
+                    .foregroundColor(.gray)
+                    .multilineTextAlignment(.center)
 
-                VStack(spacing: 20) {
-                    Text("To keep you up to date, we suggest enabling notifications")
-                        .font(.headline)
-                        .multilineTextAlignment(.center)
-
-                    Text(notificationDetailsText)
-                        .font(.footnote).bold()
-                        .foregroundColor(.gray)
-                        .multilineTextAlignment(.center)
-
-                    Button(action: { presentNotifications = true }, label: {
-                        Text(notificationButtonText)
-                    })
-                    .buttonStyle(.onboardingStyle())
-                }
-                .padding(.horizontal, 30)
-
-                Spacer()
+                Button(action: { presentNotifications = true }, label: {
+                    Text(notificationButtonText)
+                })
+                .buttonStyle(.onboardingStyle())
             }
-            .padding(.horizontal)
-            .task(id: presentNotifications) {
-                guard presentNotifications else { return }
-                if viewModel.notificationStatus == .denied {
-                    openSettings()
-                } else {
-                    await viewModel.enableNotifications()
-                }
-                presentNotifications = false
-            }
-            .onReceive(application.didBecomeActivePublisher) { _ in
-                Task {
-                    await viewModel.checkNotificationStatus()
-                }
-            }
+            .padding(.horizontal, 30)
+
+            Spacer()
         }
-
-        private func openSettings() {
-            if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
-                Task {
-                    await application.open(settingsUrl)
-                }
+        .padding(.horizontal)
+        .task(id: presentNotifications) {
+            guard presentNotifications else { return }
+            if viewModel.notificationStatus == .denied {
+                openSettings()
+            } else {
+                await viewModel.enableNotifications()
+            }
+            presentNotifications = false
+        }
+        .onReceive(application.didBecomeActivePublisher) { _ in
+            Task {
+                await viewModel.checkNotificationStatus()
             }
         }
     }
+
+    private func openSettings() {
+        if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+            Task {
+                await application.open(settingsUrl)
+            }
+        }
+    }
+}
