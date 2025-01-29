@@ -39,13 +39,64 @@ class OnboardingViewModelTests: XCTestCase {
 
         // When
         mockNotifications.notificationStatus = .authorized
-        let result = await viewModel.enableNotifications()
+        await viewModel.enableNotifications()
 
         // Then
-        XCTAssertTrue(result)
         XCTAssertTrue(mockNotifications.authorizationRequested)
         await MainActor.run {
+            // Verify both the navigation and status update
             XCTAssertEqual(viewModel.currentView, .uploadCV)
+            XCTAssertEqual(viewModel.notificationStatus, .authorized)
         }
+    }
+
+    func testSelectRoleNavigatesToNotificationsWhenNotAuthorized() async {
+        // Given
+        mockNotifications.notificationStatus = .notDetermined
+
+        // When
+        viewModel.selectRole(.candidate)
+
+        // Then
+        XCTAssertEqual(viewModel.currentView, .notifications)
+    }
+
+    func testDismissResetsState() async {
+        // Given
+        viewModel.selectRole(.candidate)
+        viewModel.currentView = .uploadCV
+
+        // When
+        viewModel.dismiss()
+
+        // Then
+        XCTAssertNil(viewModel.selectedUserRole)
+        XCTAssertFalse(viewModel.isFullScreenPresented)
+        XCTAssertEqual(viewModel.currentView, .welcome)
+    }
+
+    func testCheckNotificationStatusUpdatesState() async {
+        // Given
+        mockNotifications.notificationStatus = .authorized
+        viewModel.currentView = .notifications
+
+        // When
+        await viewModel.checkNotificationStatus()
+
+        // Then
+        XCTAssertEqual(viewModel.notificationStatus, .authorized)
+        XCTAssertEqual(viewModel.currentView, .uploadCV)
+    }
+
+    func testEnableNotificationsSchedulesNotification() async {
+        // Given
+        mockNotifications.notificationStatus = .authorized
+
+        // When
+        _ = await viewModel.enableNotifications()
+
+        // Then
+        XCTAssertEqual(mockNotifications.scheduledNotifications.count, 1)
+        XCTAssertEqual(mockNotifications.scheduledNotifications.first, .fortnightlyCheckNotification)
     }
 }

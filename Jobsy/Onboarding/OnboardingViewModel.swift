@@ -5,7 +5,7 @@
 //  Created by Lucas West on 24/01/2025.
 //
 
-import SwiftUI
+import Foundation
 
 enum UserRole: String {
     case recruiter
@@ -50,15 +50,8 @@ final class OnboardingViewModel: ObservableObject {
         return notificationStatus
     }
 
-    func enableNotifications() async -> Bool {
+    func enableNotifications() async {
         do {
-            if notificationStatus == .denied {
-                if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
-                    await UIApplication.shared.open(settingsUrl)
-                }
-                return false
-            }
-
             let granted = try await notificationsManager.requestAuthorization()
             notificationStatus = granted ? .authorized : .denied
 
@@ -66,11 +59,8 @@ final class OnboardingViewModel: ObservableObject {
                 try await notificationsManager.scheduleNotification(.fortnightlyCheckNotification)
                 navigateToUploadCV()
             }
-
-            return granted
         } catch {
             print("Failed to enable notifications: \(error)")
-            return false
         }
     }
 

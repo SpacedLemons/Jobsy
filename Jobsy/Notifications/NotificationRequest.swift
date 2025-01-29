@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct NotificationRequest {
+struct NotificationRequest: Equatable {
     let identifier: String
     let title: String
     let body: String
