@@ -8,7 +8,7 @@
 import SwiftUI
 @testable import Jobsy
 
-class MockApplicationService: ApplicationService {
+final class MockApplicationService: ApplicationService {
     var didBecomeActivePublisher: NotificationCenter.Publisher {
         NotificationCenter.default.publisher(for: Notification.Name("MockDidBecomeActive"))
     }

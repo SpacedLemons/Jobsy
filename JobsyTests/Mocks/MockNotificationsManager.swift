@@ -7,7 +7,7 @@
 
 @testable import Jobsy
 
-class MockNotificationsManager: NotificationsManagerProtocol {
+final class MockNotificationsManager: NotificationsManagerProtocol {
     var notificationStatus: NotificationStatus = .notDetermined
     var authorizationRequested = false
     var scheduledNotifications = [NotificationRequest]()

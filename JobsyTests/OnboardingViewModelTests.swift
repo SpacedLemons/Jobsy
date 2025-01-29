@@ -10,7 +10,7 @@
 import XCTest
 
 @MainActor
-class OnboardingViewModelTests: XCTestCase {
+final class OnboardingViewModelTests: XCTestCase {
     var mockNotifications: MockNotificationsManager!
     var viewModel: OnboardingViewModel!
 

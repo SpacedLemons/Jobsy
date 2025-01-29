@@ -10,7 +10,7 @@ import XCTest
 @testable import Jobsy
 
 @MainActor
-class EnableNotificationsViewTests: XCTestCase {
+final class EnableNotificationsViewTests: XCTestCase {
     var mockNotifications: MockNotificationsManager!
     var mockApplication: MockApplicationService!
     var viewModel: OnboardingViewModel!

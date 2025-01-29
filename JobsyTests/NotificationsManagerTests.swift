@@ -8,7 +8,7 @@
 @testable import Jobsy
 import XCTest
 
-class NotificationsManagerTests: XCTestCase {
+final class NotificationsManagerTests: XCTestCase {
     var manager: MockNotificationsManager!
 
     override func setUp() {

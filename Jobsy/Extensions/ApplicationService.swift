@@ -19,7 +19,7 @@ protocol NotificationPublishing {
 
 protocol ApplicationProtocol { func open(_ url: URL) async -> Bool }
 
-class UIApplicationService: ApplicationService {
+final class UIApplicationService: ApplicationService {
 
     private let notificationCenter: NotificationPublishing
     private let application: ApplicationProtocol
