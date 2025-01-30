@@ -6,6 +6,8 @@ The app is built using a standard MVVM structure. I will possibly look into impl
 
 Please find a link to the planned v1 of the app [here](https://docs.google.com/document/d/1-rNdZz7zHScNhZ9viG1k6qI3WBDACeG8iRomj3YMpZo/edit?usp=sharing)
 
+The planned proposal is to build a Python backend utilising text parsing to de-couple PDF, Word and text files to accurately spot basic information required in a CV for a recruiter (Such as contact information & more(
+
 # Setup
 
 ## Clone the Repository
