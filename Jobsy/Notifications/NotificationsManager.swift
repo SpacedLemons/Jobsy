@@ -17,14 +17,14 @@ protocol NotificationsManagerProtocol {
     func removeAllDeliveredNotifications()
 }
 
-extension NotificationsManager: NotificationsManagerProtocol {}
-
-final class NotificationsManager {
+final class NotificationsManager: NSObject, NotificationsManagerProtocol {
     static let shared = NotificationsManager()
     private let notificationCenter: UNUserNotificationCenter
 
-    init(notificationCenter: UNUserNotificationCenter = .current()) {
-        self.notificationCenter = notificationCenter
+    override init() {
+        self.notificationCenter = UNUserNotificationCenter.current()
+        super.init()
+        self.notificationCenter.delegate = self
     }
 
     func getNotificationStatus() async -> NotificationStatus {
@@ -78,4 +78,28 @@ final class NotificationsManager {
 
     func removeAllPendingNotifications() { notificationCenter.removeAllPendingNotificationRequests() }
     func removeAllDeliveredNotifications() { notificationCenter.removeAllDeliveredNotifications() }
+}
+
+extension NotificationsManager: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        let identifier = response.notification.request.identifier
+        NotificationCenter.default.post(name: .notificationTapped, object: identifier)
+        completionHandler()
+    }
+
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .sound])
+    }
+}
+
+extension Notification.Name {
+    static let notificationTapped = Notification.Name("notificationTapped")
 }

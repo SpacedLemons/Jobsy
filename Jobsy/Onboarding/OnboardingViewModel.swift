@@ -17,6 +17,7 @@ enum OnboardingView {
     case notifications
     case uploadCV
     case recruiter
+    case cvExtensionConfirmation
 }
 
 @MainActor
@@ -32,6 +33,7 @@ final class OnboardingViewModel: ObservableObject {
     init(notificationsManager: NotificationsManagerProtocol = NotificationsManager.shared) {
         self.notificationsManager = notificationsManager
         Task { await checkNotificationStatus() }
+        setupNotificationObserver()
     }
 
     func selectRole(_ role: UserRole) {
@@ -39,6 +41,39 @@ final class OnboardingViewModel: ObservableObject {
         isFullScreenPresented = true
         currentView = role == .candidate ? (notificationStatus == .authorized ? .uploadCV : .notifications) : .recruiter
     }
+
+    func navigateToUploadCV() { currentView = .uploadCV }
+
+    func dismiss() {
+        selectedUserRole = nil
+        isFullScreenPresented = false
+        currentView = .welcome
+    }
+
+    // MARK: Notifications
+
+    private func setupNotificationObserver() {
+        NotificationCenter.default.addObserver(forName: .notificationTapped,
+                                               object: nil,
+                                               queue: .main) { [weak self] notification in
+            guard let identifier = notification.object as? String,
+                  identifier == NotificationRequest.fortnightlyCheckNotification.identifier else { return }
+            Task { @MainActor [weak self] in
+                self?.handleFortnightlyNotification()
+            }
+        }
+    }
+
+    private func handleFortnightlyNotification() {
+        print("✅ CV Extension automatically confirmed via notification click")
+        currentView = .cvExtensionConfirmation
+        isFullScreenPresented = true
+
+    }
+
+    func confirmCVExtension() { print("CV Extension button pressed") }
+
+    func closeApp() { exit(0) }
 
     @discardableResult
     func checkNotificationStatus() async -> NotificationStatus {
@@ -61,15 +96,7 @@ final class OnboardingViewModel: ObservableObject {
                 navigateToUploadCV()
             }
         } catch {
-            print("Failed to enable notifications: \(error)")
+            print("❌ Failed to enable notifications: \(error)")
         }
-    }
-
-    func navigateToUploadCV() { currentView = .uploadCV }
-
-    func dismiss() {
-        selectedUserRole = nil
-        isFullScreenPresented = false
-        currentView = .welcome
     }
 }

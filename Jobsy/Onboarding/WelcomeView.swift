@@ -55,6 +55,7 @@ struct WelcomeView: View {
                             TempRecruiterView(viewModel: viewModel, userRole: userRole)
                         }
                     case .welcome: WelcomeView()
+                    case .cvExtensionConfirmation: CVExtensionConfirmationView(viewModel: viewModel)
                     }
                 }
             }
