@@ -20,9 +20,14 @@ protocol NotificationsManagerProtocol {
 final class NotificationsManager: NSObject, NotificationsManagerProtocol {
     static let shared = NotificationsManager()
     private let notificationCenter: UNUserNotificationCenter
+    private let systemNotificationCenter: NotificationCenterProtocol
 
-    override init() {
-        self.notificationCenter = UNUserNotificationCenter.current()
+    init(
+        notificationCenter: UNUserNotificationCenter = .current(),
+        systemNotificationCenter: NotificationCenterProtocol = NotificationCenter.default
+    ) {
+        self.notificationCenter = notificationCenter
+        self.systemNotificationCenter = systemNotificationCenter
         super.init()
         self.notificationCenter.delegate = self
     }
@@ -87,7 +92,7 @@ extension NotificationsManager: UNUserNotificationCenterDelegate {
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
         let identifier = response.notification.request.identifier
-        NotificationCenter.default.post(name: .notificationTapped, object: identifier)
+        systemNotificationCenter.post(name: .notificationTapped, object: identifier)
         completionHandler()
     }
 

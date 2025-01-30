@@ -28,12 +28,24 @@ final class OnboardingViewModel: ObservableObject {
     @Published var currentView: OnboardingView = .welcome
     @Published private(set) var notificationStatus: NotificationStatus = .notDetermined
 
+    private var notificationObserver: NSObjectProtocol?
     private let notificationsManager: NotificationsManagerProtocol
+    private let notificationCenter: NotificationCenterProtocol
 
-    init(notificationsManager: NotificationsManagerProtocol = NotificationsManager.shared) {
+    init(
+        notificationsManager: NotificationsManagerProtocol = NotificationsManager.shared,
+        notificationCenter: NotificationCenterProtocol = NotificationCenter.default
+    ) {
         self.notificationsManager = notificationsManager
+        self.notificationCenter = notificationCenter
         Task { await checkNotificationStatus() }
         setupNotificationObserver()
+    }
+
+    deinit {
+        if let observer = notificationObserver {
+            notificationCenter.removeObserver(observer)
+        }
     }
 
     func selectRole(_ role: UserRole) {
@@ -53,9 +65,11 @@ final class OnboardingViewModel: ObservableObject {
     // MARK: Notifications
 
     private func setupNotificationObserver() {
-        NotificationCenter.default.addObserver(forName: .notificationTapped,
-                                               object: nil,
-                                               queue: .main) { [weak self] notification in
+        notificationObserver = notificationCenter.addObserver(
+            forName: .notificationTapped,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
             guard let identifier = notification.object as? String,
                   identifier == NotificationRequest.fortnightlyCheckNotification.identifier else { return }
             Task { @MainActor [weak self] in
@@ -68,7 +82,6 @@ final class OnboardingViewModel: ObservableObject {
         print("✅ CV Extension automatically confirmed via notification click")
         currentView = .cvExtensionConfirmation
         isFullScreenPresented = true
-
     }
 
     func confirmCVExtension() { print("CV Extension button pressed") }
