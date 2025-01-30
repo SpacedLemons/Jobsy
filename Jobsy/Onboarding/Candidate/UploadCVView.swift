@@ -38,26 +38,23 @@ struct UploadCVView: View {
 
                 Button(action: { print("CV Uploaded Button Pressed") }, label: {
                     Text("Upload your CV")
-                        .frame(maxWidth: .infinity)
                 })
                 .buttonStyle(.onboardingStyle())
-                .frame(maxWidth: 300, minHeight: 50)
             }
-            .frame(maxWidth: .infinity)
             .padding(15)
             .background(Color(UIColor.secondarySystemBackground))
             .cornerRadius(12)
             .shadow(radius: 4)
             .padding(.horizontal, 20)
 
-            Text("We do not store your data or any personal information about you")
+            Text("We do not store any of your personal data")
                 .font(.footnote)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
+                .padding(.horizontal, 20)
 
-            Spacer(minLength: 16)
+            Spacer()
         }
-
     }
 }
 
