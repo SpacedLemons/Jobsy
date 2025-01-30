@@ -24,10 +24,10 @@ final class OnboardingViewModelTests: XCTestCase {
     func testCandidateSelectionWithAuthorizedNotifications() async {
         // Given
         mockNotifications.notificationStatus = .authorized
+        await viewModel.checkNotificationStatus()
 
         // When
         viewModel.selectRole(.candidate)
-        try? await Task.sleep(nanoseconds: 100_000)
 
         // Then
         XCTAssertEqual(viewModel.currentView, .uploadCV)

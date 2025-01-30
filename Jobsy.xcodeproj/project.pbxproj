@@ -29,9 +29,22 @@
 		0E3ACBD02D3DB65E002BABC9 /* JobsyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JobsyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C8608EBD2D4BCE9600BCEDFC /* Exceptions for "Jobsy" folder in "Jobsy" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 0E3ACBB42D3DB65C002BABC9 /* Jobsy */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		0E3ACBB72D3DB65C002BABC9 /* Jobsy */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C8608EBD2D4BCE9600BCEDFC /* Exceptions for "Jobsy" folder in "Jobsy" target */,
+			);
 			path = Jobsy;
 			sourceTree = "<group>";
 		};
@@ -399,6 +412,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Jobsy/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Jobsy;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -443,6 +457,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Jobsy/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Jobsy;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
