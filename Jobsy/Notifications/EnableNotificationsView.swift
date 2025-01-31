@@ -37,13 +37,13 @@ struct EnableNotificationsView: View {
 
                 Text(notificationDetailsText)
                     .font(.footnote).bold()
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.gray)
                     .multilineTextAlignment(.center)
 
                 Button(action: { viewModel.isNotificationsPresented = true }, label: {
                     Text(notificationButtonText)
                 })
-                .buttonStyle(.onboardingStyle())
+                .buttonStyle(.onboardingStyle(backgroundColor: Color.blue))
             }
             .padding(.horizontal, 30)
 

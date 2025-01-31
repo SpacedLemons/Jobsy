@@ -25,7 +25,7 @@ struct CVExtensionConfirmationView: View {
             Button(action: { viewModel.closeApp() }, label: {
                 Text("Close App")
             })
-            .buttonStyle(.onboardingStyle())
+            .buttonStyle(.onboardingStyle(backgroundColor: Color.blue))
             .padding(.horizontal, 50)
             Spacer()
         }

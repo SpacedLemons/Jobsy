@@ -8,18 +8,20 @@
 import SwiftUI
 
 extension ButtonStyle where Self == JobsyOnboardingButtonStyle {
-    static func onboardingStyle() -> JobsyOnboardingButtonStyle {
-        JobsyOnboardingButtonStyle()
+    static func onboardingStyle(backgroundColor: Color) -> JobsyOnboardingButtonStyle {
+        JobsyOnboardingButtonStyle(backgroundColor: backgroundColor)
     }
 }
 
 struct JobsyOnboardingButtonStyle: ButtonStyle {
+    let backgroundColor: Color
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.headline)
             .frame(maxWidth: .infinity)
             .padding()
-            .background(Color.blue)
+            .background(backgroundColor)
             .foregroundStyle(.white)
             .cornerRadius(10)
             .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
@@ -27,4 +29,4 @@ struct JobsyOnboardingButtonStyle: ButtonStyle {
     }
 }
 
-#Preview  { WelcomeView() }
+#Preview { WelcomeView() }
