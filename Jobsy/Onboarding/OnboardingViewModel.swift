@@ -24,6 +24,7 @@ enum OnboardingView {
 final class OnboardingViewModel: ObservableObject {
     @Published var isNotificationsPresented = false
     @Published var isFullScreenPresented = false
+    @Published var isCVSubmitted = false
     @Published var selectedUserRole: UserRole?
     @Published var currentView: OnboardingView = .welcome
     @Published private(set) var notificationStatus: NotificationStatus = .notDetermined
@@ -55,6 +56,8 @@ final class OnboardingViewModel: ObservableObject {
     }
 
     func navigateToUploadCV() { currentView = .uploadCV }
+
+    func submitCV() { isCVSubmitted = true }
 
     func dismiss() {
         selectedUserRole = nil

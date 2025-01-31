@@ -26,11 +26,11 @@ struct WelcomeView: View {
                     Text("Recruiter")
                 })
                 .accessibilityLabel("Select Recruiter Role")
-                .buttonStyle(.onboardingStyle())
+                .buttonStyle(.onboardingStyle(backgroundColor: Color.blue))
                 Button(action: { viewModel.selectRole(.candidate) }, label: {
                     Text("Candidate")
                 })
-                .buttonStyle(.onboardingStyle())
+                .buttonStyle(.onboardingStyle(backgroundColor: Color.blue))
                 .accessibilityLabel("Select Candidate Role")
             }
             .padding(.horizontal, 60)

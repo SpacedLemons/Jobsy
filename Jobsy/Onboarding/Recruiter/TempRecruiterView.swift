@@ -19,7 +19,7 @@ struct TempRecruiterView: View {
                     Text("Not a recruiter?")
                 }
                 .font(.headline)
-                .foregroundColor(.blue)
+                .foregroundStyle(.blue)
                 .padding(.leading)
             })
             .frame(maxWidth: .infinity, alignment: .leading)
