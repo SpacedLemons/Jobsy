@@ -37,6 +37,5 @@ struct TempRecruiterView: View {
 }
 
 #Preview {
-    @Previewable var viewModel = OnboardingViewModel()
-    TempRecruiterView(viewModel: viewModel, userRole: .recruiter)
+    TempRecruiterView(viewModel: .init(), userRole: .recruiter)
 }
