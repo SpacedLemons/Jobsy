@@ -12,26 +12,30 @@ enum UserRole: String {
     case candidate
 }
 
-enum OnboardingView {
-    case welcome
-    case notifications
-    case uploadCV
-    case recruiter
-    case cvExtensionConfirmation
-}
-
 @MainActor
 final class OnboardingViewModel: ObservableObject {
     @Published var isNotificationsPresented = false
     @Published var isFullScreenPresented = false
     @Published var isCVSubmitted = false
+    @Published var currentMessageIndex = 0
     @Published var selectedUserRole: UserRole?
-    @Published var currentView: OnboardingView = .welcome
+    @Published var currentView: OnboardingViewTracker = .welcome
     @Published private(set) var notificationStatus: NotificationStatus = .notDetermined
 
+    private var timer: Timer?
     private var notificationObserver: NSObjectProtocol?
+
     private let notificationsManager: NotificationsManagerProtocol
     private let notificationCenter: NotificationCenterProtocol
+
+    let loadingMessages = [
+        "Scanning your CV...",
+        "This shouldn't take too long.",
+        "Analyzing fonts and styles...",
+        "Counting the number of pages...",
+        "Decoding your career story...",
+        "Searching for typos (we won't judge)..."
+    ]
 
     init(
         notificationsManager: NotificationsManagerProtocol = NotificationsManager.shared,
@@ -51,13 +55,32 @@ final class OnboardingViewModel: ObservableObject {
 
     func selectRole(_ role: UserRole) {
         selectedUserRole = role
+        isCVSubmitted = false
         isFullScreenPresented = true
-        currentView = role == .candidate ? (notificationStatus == .authorized ? .uploadCV : .notifications) : .recruiter
+        currentView = role == .candidate
+        ? (notificationStatus == .authorized ? .uploadCV : .notifications)
+        : .recruiter
     }
 
     func navigateToUploadCV() { currentView = .uploadCV }
 
     func submitCV() { isCVSubmitted = true }
+
+    func startMessageLoop() {
+        currentMessageIndex = 0
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 2.5, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            Task { @MainActor in
+                self.currentMessageIndex = (self.currentMessageIndex + 1) % self.loadingMessages.count
+            }
+        }
+    }
+
+    func stopMessageLoop() {
+        timer?.invalidate()
+        timer = nil
+    }
 
     func dismiss() {
         selectedUserRole = nil

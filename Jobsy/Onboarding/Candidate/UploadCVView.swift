@@ -17,7 +17,7 @@ struct UploadCVView: View {
                 action: viewModel.dismiss
             )
             if viewModel.isCVSubmitted {
-                ScanningCVViewTemp()
+                ScanningCVView(viewModel: viewModel)
             } else {
                 UploadCVContentView(viewModel: viewModel)
             }
