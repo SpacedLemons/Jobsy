@@ -9,8 +9,6 @@ import SwiftUI
 
 struct UploadCVContentView: View {
     @ObservedObject var viewModel: OnboardingViewModel
-    @State private var selectedFile = "Selected_File_That_Truncates_..."
-    @State private var showSubmitButton = false
 
     var body: some View {
         VStack(spacing: 10) {
@@ -30,32 +28,53 @@ struct UploadCVContentView: View {
 
             Spacer()
         }
+        .fileImporter(
+            isPresented: $viewModel.isPresentingFilePicker,
+            allowedContentTypes: viewModel.allowedContentTypes,
+            allowsMultipleSelection: false
+        ) { result in
+            viewModel.handleFileSelection(result: result)
+        }
+        .alert("File Selection Error",
+               isPresented: .constant(viewModel.fileSelectionError != nil),
+               presenting: viewModel.fileSelectionError) { _ in
+            Button("OK", role: .cancel) { viewModel.fileSelectionError = nil }
+        } message: { error in
+            Text(error)
+        }
     }
 
     private var fileUploadSection: some View {
         VStack(spacing: 15) {
-            if showSubmitButton {
-                Text("Selected File: \(selectedFile)")
+            if let fileURL = viewModel.selectedFileURL {
+                Text("Selected File: \(fileURL.lastPathComponent)")
                     .font(.footnote)
                     .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
 
                 Text("Is this the CV you want to upload?")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
 
-                Button(action: { viewModel.isCVSubmitted.toggle() }, label: {
+                Button(action: { viewModel.submitCV() }, label: {
                     Text("Submit CV")
                 })
-                .buttonStyle(.onboardingStyle(backgroundColor: Color.green))
-            } else {
+                .buttonStyle(.onboardingStyle(backgroundColor: .green))
+            }
+
+            if viewModel.selectedFileURL == nil {
                 Text("Click the button below to get started")
                     .font(.footnote)
             }
-            // Temporary toggle
-            Button(action: { showSubmitButton.toggle() }, label: {
-                Text("Upload Your CV")
+
+            Button(action: { viewModel.isPresentingFilePicker = true }, label: {
+                Text(viewModel.selectedFileURL == nil ?
+                     "Upload Your CV" :
+                        "Upload a different CV"
+                )
             })
-            .buttonStyle(.onboardingStyle(backgroundColor: Color.blue))
+            .buttonStyle(.onboardingStyle(backgroundColor: .blue))
         }
         .padding(15)
         .background(Color(UIColor.secondarySystemBackground))
