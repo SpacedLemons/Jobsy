@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 
 enum UserRole: String {
     case recruiter
@@ -16,14 +17,19 @@ enum UserRole: String {
 final class OnboardingViewModel: ObservableObject {
     @Published var isNotificationsPresented = false
     @Published var isFullScreenPresented = false
+    @Published var isPresentingFilePicker = false
     @Published var isCVSubmitted = false
     @Published var currentMessageIndex = 0
     @Published var selectedUserRole: UserRole?
     @Published var currentView: OnboardingViewTracker = .welcome
+    @Published var selectedFileURL: URL?
+    @Published var fileSelectionError: String?
     @Published private(set) var notificationStatus: NotificationStatus = .notDetermined
 
     private var timer: Timer?
     private var notificationObserver: NSObjectProtocol?
+
+    var allowedContentTypes: [UTType] { UTType.cvTypes }
 
     private let notificationsManager: NotificationsManagerProtocol
     private let notificationCenter: NotificationCenterProtocol
@@ -63,6 +69,20 @@ final class OnboardingViewModel: ObservableObject {
     }
 
     func navigateToUploadCV() { currentView = .uploadCV }
+
+    func handleFileSelection(result: Result<[URL], Error>) {
+        switch result {
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            selectedFileURL = url
+            fileSelectionError = nil
+        case .failure(let error):
+            fileSelectionError = error.localizedDescription
+            selectedFileURL = nil
+        }
+    }
+
+    func clearFileSelection() { selectedFileURL = nil }
 
     func submitCV() { isCVSubmitted = true }
 
