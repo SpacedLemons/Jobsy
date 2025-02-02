@@ -27,12 +27,9 @@ final class OnboardingViewModel: ObservableObject {
     @Published private(set) var notificationStatus: NotificationStatus = .notDetermined
 
     private var timer: Timer?
-    private var notificationObserver: NSObjectProtocol?
+    private let notificationService: NotificationServiceProtocol
 
     var allowedContentTypes: [UTType] { UTType.cvTypes }
-
-    private let notificationsManager: NotificationsManagerProtocol
-    private let notificationCenter: NotificationCenterProtocol
 
     let loadingMessages = [
         "Scanning your CV...",
@@ -43,20 +40,10 @@ final class OnboardingViewModel: ObservableObject {
         "Searching for typos (we won't judge)..."
     ]
 
-    init(
-        notificationsManager: NotificationsManagerProtocol = NotificationsManager.shared,
-        notificationCenter: NotificationCenterProtocol = NotificationCenter.default
-    ) {
-        self.notificationsManager = notificationsManager
-        self.notificationCenter = notificationCenter
+    init(notificationService: NotificationServiceProtocol = NotificationService()) {
+        self.notificationService = notificationService
         Task { await checkNotificationStatus() }
-        setupNotificationObserver()
-    }
-
-    deinit {
-        if let observer = notificationObserver {
-            notificationCenter.removeObserver(observer)
-        }
+        setupNotificationHandling()
     }
 
     // Here for debugging purposes
@@ -113,14 +100,8 @@ final class OnboardingViewModel: ObservableObject {
 
     // MARK: Notifications
 
-    private func setupNotificationObserver() {
-        notificationObserver = notificationCenter.addObserver(
-            forName: .notificationTapped,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            guard let identifier = notification.object as? String,
-                  identifier == NotificationRequest.fortnightlyCheckNotification.identifier else { return }
+    private func setupNotificationHandling() {
+        notificationService.setupNotificationObserver { [weak self] in
             Task { @MainActor [weak self] in
                 self?.handleFortnightlyNotification()
             }
@@ -135,7 +116,7 @@ final class OnboardingViewModel: ObservableObject {
 
     @discardableResult
     func checkNotificationStatus() async -> NotificationStatus {
-        notificationStatus = await notificationsManager.getNotificationStatus()
+        notificationStatus = await notificationService.checkAndUpdateStatus()
 
         if notificationStatus == .authorized && currentView == .notifications {
             navigateToUploadCV()
@@ -146,11 +127,10 @@ final class OnboardingViewModel: ObservableObject {
 
     func enableNotifications() async {
         do {
-            let granted = try await notificationsManager.requestAuthorization()
+            let granted = try await notificationService.enableNotifications()
             notificationStatus = granted ? .authorized : .denied
 
             if granted {
-                try await notificationsManager.scheduleNotification(.fortnightlyCheckNotification)
                 navigateToUploadCV()
             }
         } catch {
