@@ -9,10 +9,10 @@
 
 final class MockNotificationsManager: NotificationsManagerProtocol {
     var notificationStatus: NotificationStatus = .notDetermined
-    var authorizationRequested = false
     var scheduledNotifications = [NotificationRequest]()
-    var removedIdentifiers = [String]()
+    var authorizationRequested = false
     var removeAllPendingCalled = false
+    var removedIdentifiers = [String]()
 
     func getNotificationStatus() async -> NotificationStatus { notificationStatus }
 

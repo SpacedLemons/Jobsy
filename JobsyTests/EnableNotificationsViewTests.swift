@@ -11,23 +11,23 @@ import XCTest
 
 @MainActor
 final class EnableNotificationsViewTests: XCTestCase {
-    var mockNotifications: MockNotificationsManager!
+    var mockNotificationService: MockNotificationService!
     var mockApplication: MockApplicationService!
     var viewModel: OnboardingViewModel!
 
     @MainActor
     override func setUp() {
         super.setUp()
-        mockNotifications = MockNotificationsManager()
+        mockNotificationService = MockNotificationService()
         mockApplication = MockApplicationService()
-        viewModel = OnboardingViewModel(notificationsManager: mockNotifications)
+        viewModel = OnboardingViewModel(notificationService: mockNotificationService)
     }
 
     func testOpenSettingsWhenDenied() async {
         // Given
         let view = EnableNotificationsView(viewModel: viewModel)
 
-        mockNotifications.notificationStatus = .denied
+        mockNotificationService.notificationStatus = .denied
         await viewModel.checkNotificationStatus()
 
         // When
@@ -43,7 +43,7 @@ final class EnableNotificationsViewTests: XCTestCase {
         // Given
         let view = EnableNotificationsView(viewModel: viewModel)
 
-        mockNotifications.notificationStatus = .notDetermined
+        mockNotificationService.notificationStatus = .notDetermined
         await viewModel.checkNotificationStatus()
 
         // When
@@ -51,19 +51,19 @@ final class EnableNotificationsViewTests: XCTestCase {
         await viewModel.enableNotifications()
 
         // Then
-        XCTAssertTrue(mockNotifications.authorizationRequested)
+        XCTAssertTrue(mockNotificationService.authorizationRequested)
     }
 
     func testNavigateToUploadCVWhenReturningFromSettings() async {
         // Given
         let _ = EnableNotificationsView(viewModel: viewModel)
 
-        mockNotifications.notificationStatus = .denied
+        mockNotificationService.notificationStatus = .denied
         await viewModel.checkNotificationStatus()
         viewModel.selectRole(.candidate)
 
         // When
-        mockNotifications.notificationStatus = .authorized
+        mockNotificationService.notificationStatus = .authorized
         mockApplication.simulateDidBecomeActive()
         await viewModel.checkNotificationStatus()
 

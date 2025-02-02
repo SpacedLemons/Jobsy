@@ -5,25 +5,24 @@
 //  Created by Lucas West-Rogers on 28/01/2025.
 //
 
-
 @testable import Jobsy
 import XCTest
 
 @MainActor
 final class OnboardingViewModelTests: XCTestCase {
-    var mockNotifications: MockNotificationsManager!
+    var mockNotificationService: MockNotificationService!
     var viewModel: OnboardingViewModel!
 
     @MainActor
     override func setUp() {
         super.setUp()
-        mockNotifications = MockNotificationsManager()
-        viewModel = OnboardingViewModel(notificationsManager: mockNotifications)
+        mockNotificationService = MockNotificationService()
+        viewModel = OnboardingViewModel(notificationService: mockNotificationService)
     }
 
     func testCandidateSelectionWithAuthorizedNotifications() async {
         // Given
-        mockNotifications.notificationStatus = .authorized
+        mockNotificationService.notificationStatus = .authorized
         await viewModel.checkNotificationStatus()
 
         // When
@@ -35,14 +34,14 @@ final class OnboardingViewModelTests: XCTestCase {
 
     func testEnableNotificationsFlow() async {
         // Given
-        mockNotifications.notificationStatus = .notDetermined
+        mockNotificationService.notificationStatus = .notDetermined
 
         // When
-        mockNotifications.notificationStatus = .authorized
+        mockNotificationService.notificationStatus = .authorized
         await viewModel.enableNotifications()
 
         // Then
-        XCTAssertTrue(mockNotifications.authorizationRequested)
+        XCTAssertTrue(mockNotificationService.authorizationRequested)
         await MainActor.run {
             XCTAssertEqual(viewModel.currentView, .uploadCV)
             XCTAssertEqual(viewModel.notificationStatus, .authorized)
@@ -51,7 +50,7 @@ final class OnboardingViewModelTests: XCTestCase {
 
     func testSelectRoleNavigatesToNotificationsWhenNotAuthorized() async {
         // Given
-        mockNotifications.notificationStatus = .notDetermined
+        mockNotificationService.notificationStatus = .notDetermined
 
         // When
         viewModel.selectRole(.candidate)
@@ -76,7 +75,7 @@ final class OnboardingViewModelTests: XCTestCase {
 
     func testCheckNotificationStatusUpdatesState() async {
         // Given
-        mockNotifications.notificationStatus = .authorized
+        mockNotificationService.notificationStatus = .authorized
         viewModel.currentView = .notifications
 
         // When
@@ -89,13 +88,29 @@ final class OnboardingViewModelTests: XCTestCase {
 
     func testEnableNotificationsSchedulesNotification() async {
         // Given
-        mockNotifications.notificationStatus = .authorized
+        mockNotificationService.notificationStatus = .authorized
 
         // When
-        _ = await viewModel.enableNotifications()
+        await viewModel.enableNotifications()
 
         // Then
-        XCTAssertEqual(mockNotifications.scheduledNotifications.count, 1)
-        XCTAssertEqual(mockNotifications.scheduledNotifications.first, .fortnightlyCheckNotification)
+        XCTAssertEqual(mockNotificationService.scheduledNotifications.count, 1)
+        XCTAssertEqual(mockNotificationService.scheduledNotifications.first, .fortnightlyCheckNotification)
+    }
+
+    func testNotificationObserverSetup() {
+        // Then
+        XCTAssertTrue(mockNotificationService.notificationObserverSetup)
+    }
+
+    func testFortnightlyNotificationHandling() async {
+        // When
+        await mockNotificationService.simulateFortnightlyNotification()
+
+        // Then
+        await MainActor.run {
+            XCTAssertEqual(viewModel.currentView, .cvExtensionConfirmation)
+            XCTAssertTrue(viewModel.isFullScreenPresented)
+        }
     }
 }
