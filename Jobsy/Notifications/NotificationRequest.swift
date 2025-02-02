@@ -17,15 +17,6 @@ struct NotificationRequest: Equatable {
 }
 
 extension NotificationRequest {
-    static let stillSearchingForRoleNotification = NotificationRequest(
-        identifier: "stillSearchingForRole",
-        title: "Are you still looking for a role?",
-        body: "Please click here to update us, or your CV may be removed from our database",
-        timeInterval: 1,
-        repeats: false,
-        preventsStackingNotifications: true
-    )
-
     static let fortnightlyCheckNotification = NotificationRequest(
         identifier: "fortnightlyCheck",
         title: "Job Market Status Check",
