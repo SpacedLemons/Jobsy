@@ -18,3 +18,5 @@ struct OnboardingBackButton: View {
         .buttonStyle(.backStyle())
     }
 }
+
+#Preview { OnboardingBackButton(buttonTitle: "Back", action: {}) }

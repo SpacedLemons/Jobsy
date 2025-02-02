@@ -74,3 +74,5 @@ struct EnableNotificationsView: View {
         }
     }
 }
+
+#Preview { EnableNotificationsView(viewModel: .init()) }

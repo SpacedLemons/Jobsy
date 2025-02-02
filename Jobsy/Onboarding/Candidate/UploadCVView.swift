@@ -24,4 +24,5 @@ struct UploadCVView: View {
         }
     }
 }
+
 #Preview { UploadCVView(viewModel: .init()) }
