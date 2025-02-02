@@ -59,6 +59,9 @@ final class OnboardingViewModel: ObservableObject {
         }
     }
 
+    // Here for debugging purposes
+    func closeApp() { exit(0) }
+
     func selectRole(_ role: UserRole) {
         selectedUserRole = role
         isCVSubmitted = false
@@ -129,8 +132,6 @@ final class OnboardingViewModel: ObservableObject {
         currentView = .cvExtensionConfirmation
         isFullScreenPresented = true
     }
-
-    func closeApp() { exit(0) }
 
     @discardableResult
     func checkNotificationStatus() async -> NotificationStatus {
