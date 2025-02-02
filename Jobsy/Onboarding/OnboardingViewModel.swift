@@ -130,8 +130,6 @@ final class OnboardingViewModel: ObservableObject {
         isFullScreenPresented = true
     }
 
-    func confirmCVExtension() { print("CV Extension button pressed") }
-
     func closeApp() { exit(0) }
 
     @discardableResult
